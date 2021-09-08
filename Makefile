@@ -82,6 +82,11 @@ else ifeq ($(platform),windows) # For MSYS2 only
   OUTNAME := dosbox_pure_libretro.dll
   CXX     ?= g++
   LDFLAGS := -Wl,--gc-sections -fno-ident
+else ifeq ($(platform), emscripten)
+  OUTNAME := dosbox_pure_libretro_emscripten.bc
+  fpic := -fPIC
+  STATIC_LINKING = 1
+  LDFLAGS :=
 else ifeq ($(platform),vita)
   OUTNAME := dosbox_pure_libretro_vita.a
   CXX     := arm-vita-eabi-g++
