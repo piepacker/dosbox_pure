@@ -318,6 +318,9 @@ static void retro_notify(int duration, retro_log_level lvl, char const* format,.
 	if (!environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &msg) && duration >= 0) log_cb(RETRO_LOG_ERROR, "%s", buf);
 }
 
+// Piepacker
+static bool s_reset_me;
+
 // ------------------------------------------------------------------------------
 
 static void DBP_StartOnScreenKeyboard();
@@ -1504,6 +1507,11 @@ static void DBP_PureMenuProgram(Program** make)
 			dbp_lastmenuticks = DBP_GetTicks();
 
 			RefreshFileList(true);
+
+			if (on_finish) {
+				s_reset_me = true;
+				return;
+			}
 
 			#ifndef STATIC_LINKING
 			if (on_finish && !always_show_menu && ((exe_count == 1 && fs_count <= 1) || use_autoboot))
@@ -3113,6 +3121,7 @@ void retro_set_controller_port_device(unsigned port, unsigned device) //#5
 
 void retro_reset(void)
 {
+	s_reset_me = false;
 	DBP_Shutdown();
 	DBPArchiveZeroer ar;
 	DBPSerialize_All(ar);
@@ -3134,6 +3143,11 @@ void retro_reset(void)
 
 void retro_run(void)
 {
+	if (s_reset_me) {
+		retro_reset();
+		return;
+	}
+
 	#ifdef DBP_ENABLE_FPS_COUNTERS
 	DBP_FPSCOUNT(dbp_fpscount_retro)
 	uint32_t curTick = DBP_GetTicks();
