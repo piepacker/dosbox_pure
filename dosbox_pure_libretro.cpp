@@ -40,6 +40,8 @@
 #include <string>
 #include <chrono>
 
+#define ENABLE_START_MENU 0
+
 #ifndef DBP_THREADS_CLASSES
 #define DBP_STACK_SIZE (2*1024*1024) //2 MB
 #ifdef WIN32
@@ -1494,7 +1496,11 @@ static void DBP_PureMenuProgram(Program** make)
 		virtual void Run()
 		{
 			bool on_boot = cmd->FindExist("-BOOT"), on_finish = cmd->FindExist("-FINISH");
+#if ENABLE_START_MENU
 			bool always_show_menu = (dbp_menu_time == (char)-1 || (on_finish && (DBP_GetTicks() - dbp_lastmenuticks) < 500));
+#else
+			bool always_show_menu = false;
+#endif
 			dbp_lastmenuticks = DBP_GetTicks();
 
 			RefreshFileList(true);
@@ -1504,7 +1510,9 @@ static void DBP_PureMenuProgram(Program** make)
 			{
 				if (dbp_menu_time == 0) { first_shell->exit = true; return; }
 				char secs[] = { (char)('0' + dbp_menu_time), '\0' };
+#if ENABLE_START_MENU
 				always_show_menu = true;
+#endif
 				dbp_gfx_intercept = NULL;
 				dbp_input_intercept = NULL;
 				INT10_SetCursorShape(0, 0);
