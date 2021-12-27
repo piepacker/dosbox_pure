@@ -212,6 +212,10 @@ CFLAGS  += $(COMMONFLAGS)
 LDFLAGS += $(CPUFLAGS) -lpthread -shared
 #LDFLAGS += -static-libstdc++ -static-libgcc #adds 1MB to output and still dynamically links against libc and libm
 
+ifneq ($(PIEPACKER),)
+CFLAGS += -D__PIEPACKER__
+endif
+
 .PHONY: all clean
 all: $(OUTNAME)
 

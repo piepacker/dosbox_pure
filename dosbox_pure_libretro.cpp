@@ -2697,7 +2697,11 @@ static bool init_dosbox(const char* path, bool firsttime)
 		{
 			save_file = env_save_dir;
 			save_file += '/';
+#ifdef __PIEPACKER__
+			save_file += "DOSBox-pure";
+#else
 			save_file += (dbp_content_name.empty() ? "DOSBox-pure" : dbp_content_name.c_str());
+#endif
 			save_file += ".save.zip";
 		}
 
