@@ -20,7 +20,7 @@ jobs:
       - run: make PIEPACKER=1 -j 4
 
       - name: ZIP Release
-        uses: papeloto/action-zip@v1
+        uses: vimtor/action-zip@v1
         with:
           files: dosbox_pure_libretro.so
           dest: dosbox_pure_libretro.so.zip
