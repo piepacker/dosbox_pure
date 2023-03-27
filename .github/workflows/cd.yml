@@ -27,7 +27,7 @@ jobs:
 
       - name: Get release
         id: get_release
-        uses: bruceadams/get-release@v1.2.2
+        uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -39,5 +39,67 @@ jobs:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: dosbox_pure_libretro.so.zip
           asset_name: dosbox_pure-Linux-x86_64.zip
+          asset_content_type: application/zip
+
+            build_osx:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - run: make PIEPACKER=1 -j 4
+
+      - name: ZIP Release
+        uses: vimtor/action-zip@v1
+        with:
+          files: dosbox_pure_libretro.dylib
+          dest: dosbox_pure_libretro.dylib.zip
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: dosbox_pure_libretro.dylib.zip
+          asset_name: dosbox_pure-OSX-x86_64.zip
+          asset_content_type: application/zip
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - run: CC=gcc make platform=win PIEPACKER=1 -j 4
+
+      - name: ZIP Release
+        uses: vimtor/action-zip@v1
+        with:
+          files: dosbox_pure_libretro.dll
+          dest: dosbox_pure_libretro.dll.zip
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: dosbox_pure_libretro.dll.zip
+          asset_name: dosbox_pure-Windows-x86_64.zip
           asset_content_type: application/zip
 
